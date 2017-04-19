@@ -4,6 +4,6 @@ Tools to extract urban canopy parameters from NYC's PLUTO data and interpolate t
 ## Installing and using
 ### External dependencies
 
-NumPy - Pluto methods use numpy arrays internally. Some methods also return numpy arrays.
-SciPy - Pluto uses the interpolate module from SciPy to grid from scattered points to a regular grid
-PyProj - Needed to convert from the native Pluto projection to Lat/Lon coordinates
+1. NumPy - Pluto methods use numpy arrays internally. Some methods also return numpy arrays.
+2. SciPy - Pluto uses the interpolate module from SciPy to grid from scattered points to a regular grid
+3. PyProj - Needed to convert from the native Pluto projection to Lat/Lon coordinates
