@@ -7,9 +7,6 @@ from scipy.interpolate import griddata
 # A module to deal with PLUTO data. It should cover projecting to geographical
 # coordinates, calculating the variables needed for WRF, and interpolating into
 # a regular grid as class methods.
-# TODO: interpolation to a regular grid
-# TODO: Finish all the UCPs
-
 
 class Pluto:
 
@@ -128,7 +125,7 @@ class Pluto:
                 if float(lotArea) >= planArea:
                     planAreaFrac = planArea/float(lotArea)
                 else:
-                    planAreaFrac = np.nan
+                    planAreaFrac = 1.0
 
             except ValueError:
                 # print 'At least one pluto value unavailable'
@@ -193,12 +190,17 @@ class Pluto:
 
         return (buildAreaFrac, buildheight, buildsurfplanratio)
 
-    def interpolateUCP(self, delta=0.001, method='nearest'):
+    def interpolateUCP(self, newgrid=None, delta=0.001, method='nearest'):
 
         """ This method interpolates the scattered building data from PLUTO
             into a regular grid at grid spacing coorddelta (milli-degree
             default). We also convert from the PLUTO projection (EPSG: 2263, m)
             to a geographical coordinate system (EPSG: 4326, lat/lon).
+
+            INPUT:
+            newgrid: Tuple containing n x m shape arrays for lon and lat. If
+             None, computes the target grid using the mix/ma coordinates of the
+            source PLUTO data.
         """
 
         # Get the UCPs as dictionaries with coordinates as the key
@@ -223,14 +225,16 @@ class Pluto:
 
         # To generate the regular grid, we use the min and max values from
         # lon/lat
-        longrid = np.arange(min(lon), max(lon) + delta, delta)
-        latgrid = np.arange(min(lat), max(lat) + delta, delta)
+        if newgrid is None:
+            longrid = np.arange(min(lon), max(lon) + delta, delta)
+            latgrid = np.arange(min(lat), max(lat) + delta, delta)
 
-        newx, newy = np.meshgrid(longrid, latgrid)
-
+            newx, newy = np.meshgrid(longrid, latgrid)
+        else:
+            newx, newy = newgrid
+        sourcecoords = np.array((lon, lat)).transpose()
         # Now generate the gridded UCPs using griddata
-        ucp = [griddata(np.array((lon, lat)).transpose(),
-                        val, (newx, newy), method=method)
-               for val in (bfrac.values(), bhgt.values(), bsurf.values())]
+        ucp = [griddata(sourcecoords, val.values(), (newx, newy), method=method)
+               for val in (bfrac, bhgt, bsurf)]
 
-        return ucp
+        return newx, newy, ucp
