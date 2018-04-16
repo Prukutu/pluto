@@ -7,12 +7,13 @@ from scipy.interpolate import griddata
 # A module to deal with PLUTO data. It should cover projecting to geographical
 # coordinates, calculating the variables needed for WRF, and interpolating into
 # a regular grid as class methods.
+# TODO: Incorporate parks and other areas without buildings.
 
 class Pluto:
 
     def __init__(self, workdir='./'):
         """ Initialize the Pluto class with working directory. The working
-            directory should contain all the Pluto files. Sadly, the don't
+            directory should contain all the raw PLUTO files. Sadly, the don't
             come as a single file for NYC. One file per borough.
         """
         self.workdir = workdir
