@@ -215,8 +215,7 @@ class Pluto:
         target_proj = pyproj.Proj(init='EPSG:4326')
         conv = .3048  # foot to meter conversion factor
 
-        # Use pyproj to transform from source projection (I mean, WTF is
-        # New York/Long Island State Plane projection anyways? Ugh).
+        # Use pyproj to transform from source projection 
         coords = [pyproj.transform(source_proj,
                                    target_proj,
                                    conv*float(x),
